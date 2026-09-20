@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, Shield, Activity, Users, Award, PlusCircle, LayoutDashboard } from "lucide-react";
+import { Trophy, Shield, Activity, Award, PlusCircle, LayoutDashboard, LogIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -34,7 +34,7 @@ export function Navbar() {
           <nav className="hidden md:flex items-center space-x-1">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
               return (
                 <Link
                   key={item.href}
@@ -56,8 +56,16 @@ export function Navbar() {
           {/* Action CTA */}
           <div className="flex items-center space-x-3">
             <Link
+              href="/login"
+              className="flex items-center space-x-2 px-3.5 py-2 rounded-lg text-xs font-bold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors"
+            >
+              <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Admin Login</span>
+            </Link>
+
+            <Link
               href="/admin/tournaments/create"
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-colors shadow-lg shadow-emerald-500/20"
+              className="hidden sm:flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-colors shadow-lg shadow-emerald-500/20"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Create Tournament</span>
