@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Trophy, Github, Globe } from "lucide-react";
+import { Trophy, Globe } from "lucide-react";
 
 export function Footer() {
   return (

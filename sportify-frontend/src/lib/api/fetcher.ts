@@ -1,17 +1,23 @@
 import "server-only";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const API_BASE_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
 
 interface FetchOptions extends RequestInit {
   revalidate?: number | false;
   tags?: string[];
+  timeoutMs?: number;
 }
 
 export async function fetcher<T>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<T> {
-  const { revalidate = 60, tags, headers, ...customConfig } = options;
+  // If no backend API URL is explicitly configured, throw immediately so feature functions use mock data in 0ms
+  if (!API_BASE_URL) {
+    throw new Error("No backend API URL configured. Using mock dataset.");
+  }
+
+  const { revalidate = 60, tags, headers, timeoutMs = 1500, ...customConfig } = options;
 
   const config: RequestInit = {
     method: customConfig.method || "GET",
@@ -19,6 +25,7 @@ export async function fetcher<T>(
       "Content-Type": "application/json",
       ...headers,
     },
+    signal: AbortSignal.timeout(timeoutMs),
     ...customConfig,
   };
 
@@ -42,7 +49,6 @@ export async function fetcher<T>(
     const json = await response.json();
     return json.data !== undefined ? json.data : json;
   } catch (error: any) {
-    console.error(`[Fetcher Error] [${config.method}] ${url}:`, error.message);
     throw error;
   }
 }
